@@ -1,0 +1,265 @@
+import {v4 as uuidv4} from 'uuid';
+
+
+class Item {
+    constructor(
+        private _name: string,
+        private _price: number,
+        private _description: string,
+        private _id: string = uuidv4()
+    ){}
+
+ 
+    // itemElement(): HTMLDivElement {
+    //     const card = document.createElement('div');
+    //     card.classList.add('item-card');
+
+    //     const itemName = document.createElement('h2');
+    //     itemName.textContent = this._name;
+
+    //     const itemDescription = document.createElement('p');
+    //     itemDescription.textContent = this._description;
+
+    //     const itemPrice = document.createElement('p')
+    //     itemPrice.textContent = `$${this._price.toFixed(2)}`
+
+    //     // Add To Cart Button
+    //     const addToCartButton = document.createElement('button');
+    //     addToCartButton.textContent = 'Add to Cart'
+
+    //     addToCartButton.addEventListener('click', () => myUser.addToCart(this))
+        
+    //     return card
+    // }
+
+    public get id(): string {
+        return this._id;
+    }
+    public set id(value: string) {
+        this._id = value;
+    }
+    public get description(): string {
+        return this._description;
+    }
+    public set description(value: string) {
+        this._description = value;
+    }
+    public get price(): number {
+        return this._price;
+    }
+    public set price(value: number) {
+        this._price = value;
+    }
+    public get name(): string {
+        return this._name;
+    }
+    public set name(value: string) {
+        this._name = value;
+    }
+}
+
+
+class User {
+    constructor(
+        private _name: string,
+        private _age: number,
+        private _cart: Item[] = [],
+        private _id: string = uuidv4()
+    ){}
+        static loginUser() {
+        const nameInput = document.getElementById('nameinput') as HTMLInputElement | null;
+        const ageInput = document.getElementById('ageinput') as HTMLInputElement | null;
+        const loginButton = document.getElementById('loginbutton') as HTMLButtonElement | null ;
+        //const loginForm = document.getElementById('logindiv') as HTMLDivElement | null
+        const loginForm2 = document.getElementById('loginform') as HTMLFormElement | null
+
+        if (nameInput && ageInput && loginButton && loginForm2){
+
+            loginButton.addEventListener('click', (event) => {
+                event.preventDefault()
+                console.log('here')
+                const name = nameInput.value.trim();
+                const age = parseInt(ageInput.value);
+                console.log('name and age', name, age);
+                
+
+                let user = new User(name,age)
+                console.log('USER CREATED', user)
+              
+                // loginForm.style.display = 'none';
+
+                // console.log('Login Form Hidden')
+
+
+            return new User(name, age)
+            })
+
+        
+        }
+            return null;
+    }
+
+    // public cartHTMLElement(): HTMLDivElement {
+    //     const cartContainer = document.createElement('div')
+    //     cartContainer.classList.add('cart-container')
+
+    //     for (let item of this._cart) {
+    //         let itemDiv = document.createElement('div')
+    //         itemDiv.classList.add('cart-item')
+    //         let itemName = document.createElement('span')
+    //         itemName.classList.add('itemName')
+    //         let itemQuantity = document.createElement('span')
+    //         itemQuantity.classList.add('quantity')
+    //         let itemPrice = document.createElement('span')
+    //         itemPrice.textContent = `$${item.price}`
+
+            
+    //         itemDiv.appendChild(itemName)
+    //         itemDiv.appendChild(itemQuantity)
+    //         itemDiv.appendChild(itemPrice)
+  
+
+    //         cartContainer.appendChild(itemDiv)
+    //     }
+    //     return cartContainer
+
+    // }
+
+
+    public get id(): string {
+        return this._id;
+    }
+    public set id(value: string) {
+        this._id = value;
+    }//
+    public get cart(): Item[] {
+        return this._cart;
+    }
+    public set cart(value: Item[]) {
+        this._cart = value;
+    }
+    public get age(): number {
+        return this._age;
+    }
+    public set age(value: number) {
+        this._age = value;
+    }
+    public get name(): string {
+        return this._name;
+    }
+    public set name(value: string) {
+        this._name = value;
+    }
+    // public createElement(): HTMLTableCaptionElement{
+    //     let row = document.createElement('tr')
+    //     HTMLTableRowElement.innerHTML = `<tr>$this.name`
+    // }
+    public addToCart(item:Item):void{
+        this.cart.push(item)
+    }
+    public removeFromCart(itemToRemove:Item):void{
+        this.cart = this.cart.filter( item => item.id !== itemToRemove.id )
+    }
+
+    public removeQuantityFromCart(itemToRemove:Item, quantity:number):void{
+        for (let i=0; i<quantity; i++){
+            let index = this.cart.findIndex(item => item.id === itemToRemove.id);
+            this.cart.splice(index, 1);
+        }
+    }
+
+    public getCartTotal():number{
+        let total = 0;
+        for (let item of this.cart){
+            total += item.price
+        }
+        return total
+    }
+
+    public printCart():void{
+        console.log(`Here is what is in your cart, ${this.name}:`)
+        for (let item of this.cart){
+            console.log(`${item.name}: $${item.price}`)
+        }
+        console.log(`Total: $${this.getCartTotal()}`)
+    }
+
+}
+
+
+
+//new User(User.loginUser(), User.age)
+
+//showItems() - This method will loop over all teh shop items and add each items itemElement to the shop div ofthe
+class Shop {
+        
+    constructor(
+        private _items: Item[] = []
+    ){
+        let itemA = new Item('F-14 Tomcat', 10, 'Iranian surpluss, functional, port turbine non-functioning');
+        this.items.push(itemA);
+
+        let itemB = new Item('Delorean', 15, 'Salvage title: was hit by a train but has Flux capacitor');
+        this.items.push(itemB);
+
+        let itemC = new Item('knife', 100, 'Kershaw knife sitting on my desk');
+        this.items.push(itemC);
+    }
+    public get items(): Item[] {
+        return this._items;
+    }
+    public set items(value: Item[]) {
+        this._items = value;
+    }
+    public showItems(){
+        const shopDiv = document.getElementById('shop')
+        if (shopDiv) {        
+        
+            shopDiv.innerHTML = '';
+        
+        this._items.forEach((item) => { const itemCard = item.itemElement()
+        shopDiv?.appendChild(itemCard)
+    }) 
+    } else {
+        console.log('ShopDiv Element not found in HTML')
+
+
+    }
+}
+}
+
+    
+
+let myShop = new Shop();
+let myUser = new User('frank', 33);
+
+
+// let htmlUser = User.loginUser()
+
+
+
+
+
+
+
+myUser.addToCart(myShop.items[0]);
+    
+
+// new Shop();
+// const myUser = User.loginInUser()
+// if (myUser !== null)
+// myUser.addToCart(Shop.Item[0])
+// // new User();
+// // let myUser = User.loginInUser()
+// // let myUser = new User(LoginInUser())
+// myUser.addToCart(Shop.Item[0]);
+// if 
+// // myUser.printCart();
+
+
+
+// console.log('running....')
+
+
+
+// User.loginInUser()

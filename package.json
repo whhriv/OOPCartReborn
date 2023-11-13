@@ -1,0 +1,26 @@
+{
+  "name": "oopcartreborn",
+  "version": "1.0.0",
+  "description": "Typescript Webpack HTML storefront",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run bundle && npm-run-all --parallel watch serve",
+    "bundle": "webpack",
+    "watch": "webpack --watch",
+    "serve": "cd dist && live-server"
+  },
+  "author": "William Reeder",
+  "license": "ISC",
+  "dependencies": {
+    "@types/uuid": "^9.0.7",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.2.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "npm-run-all": "^4.1.5",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
