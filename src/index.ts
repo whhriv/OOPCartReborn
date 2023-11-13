@@ -9,19 +9,20 @@ class Item {
     ){}
 
  
-    itemElement(): HTMLDivElement {
+    public itemElement(): HTMLDivElement {
         const cardBody = document.createElement('div');
         const card = document.createElement('div');
         card.classList.add('item-card');
-        //const cardBody = document.createElement('div');
         cardBody.classList.add('container')
-        const cardDiv = document.createElement('div');
-        cardDiv.classList.add('col-sm-6', 'mb-3', 'mb-sm-0')
-        const cardDiv1 = document.createElement('div');
-        cardDiv1.classList.add('card')
-        const cardDiv2 = document.createElement('div');
-        cardDiv2.classList.add('card-body')
-        
+
+        card.innerHTML = `<div class="card item-card" style="width: 18rem; height: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">${this._name}</h5>
+            <p class="card-text">${this._description}</p>
+            <p class="card-text">$${this._price}</p>
+            <button class="btn btn-primary" id="addToCart">Add To Cart</button>
+            </div>
+    </div>`
         
         cardBody.classList.add('border', 'border-primary')
     
@@ -38,8 +39,13 @@ class Item {
         itemPrice.classList.add('card-text')
 
         // Add To Cart Button
-        const addToCartButton = document.createElement('button');
-        addToCartButton.textContent = 'Add to Cart'
+        const addToCartButton = card.querySelector('#addToCart') as HTMLButtonElement;
+        // addToCartButton.textContent = 'Add to Cart'
+    
+        addToCartButton.onclick=() => {
+           console.log('here I am')
+            Shop.myUser!.addToCart(this)
+        }
         addToCartButton.classList.add('btn')
         addToCartButton.classList.add('btn-primary')
 
@@ -51,24 +57,13 @@ class Item {
         card.appendChild(cardBody)
 
        card.style.display = 'flex';
-       cardBody.style.display = 'grid'
-       cardBody.style.display = '18rem;'
-        //card.style.display = 'border solid black'
+    //    cardBody.style.display = 'grid'
+    //    cardBody.style.display = '18rem;'
+    
 
 
     // TODO: Make sure we have access to User Object during this period
-        addToCartButton.addEventListener('click', () => {
-            console.log('Event Listener for ADD TO CARY BUTTON', myUser, myShop);
-            // myUser?.addToCart(this)   
-            myShop.updateCart(this)
-            console.log(myShop.updateCart(this), 'am I working?')
-            
-           //myUser?.updateCart(this)
-            // Shop.updateCart(this)
-           // console.log('itemAdd variable',itemAdd)                                           //Problematic?
-            console.log(this, 'after ADD-TO-CART called')
-        })
-        
+       
         return card
     }
  
@@ -100,7 +95,32 @@ class Item {
 }
 
 
-class User {
+class User {    
+    static addLoginUserListener():User | undefined {
+        const nameInput = document.getElementById('nameinput') as HTMLInputElement | null;
+        const ageInput = (<HTMLInputElement>document.getElementById('ageinput')).value;
+        const loginButton = document.getElementById('loginbutton') as HTMLButtonElement | null ;
+        const loginForm = document.getElementById('logindiv') as HTMLDivElement | null
+
+
+        if (nameInput && ageInput){
+    
+            
+            const name = nameInput.value.trim();
+            const age = parseInt(ageInput);
+
+
+            let user = new User(name,age)
+            console.log('USER CREATED', user, age)
+          
+            loginForm!.style.display = 'none';
+            document.getElementById('cart-container')!.style.visibility = 'visible'
+            return new User(name, age);
+
+           
+        }
+            return;
+    }   
     static myUser: User | undefined;
     static age: number;
     constructor(
@@ -114,118 +134,7 @@ class User {
         this._cart = _cart
         this._id = _id
     }
-    
-    static addLoginUserListener() {
-        const nameInput = document.getElementById('nameinput') as HTMLInputElement | null;
-        const ageInput = document.getElementById('ageinput') as HTMLInputElement | null;
-        const loginButton = document.getElementById('loginbutton') as HTMLButtonElement | null ;
-        const loginForm = document.getElementById('logindiv') as HTMLDivElement | null
-       // const loginForm2 = document.getElementById('loginform') as HTMLFormElement | null
-
-        if (nameInput && ageInput && loginButton && loginForm){
-
-            loginButton.addEventListener('click', (event) => {
-                event.preventDefault()
-                //console.log('here')
-                const name = nameInput.value.trim();
-                const age = parseInt(ageInput.value);
-                //console.log('name and age', name, age);
-                
-
-                let user = new User(name,age)
-                console.log('USER CREATED', user, age)
-              
-                loginForm.style.display = 'none';
-                return new User(name, age);
-
-              
-            })
-           
-        }
-            return null;
-    }   
-    // }
-    // private _cartContainer: HTMLDivElement | null = null
-    // public setCartContainer(cartContainer: HTMLDivElement | null) {
-    //     this._cartContainer = cartContainer
-    // }
-    // public cartHTMLElement(cartContainer: HTMLDivElement): void {
-    
-    // public cartHTMLElement1(): HTMLDivElement {
-    //  //   const cartContainer1 = document.getElementById('cart-container')
-    //     const table = document.createElement('table')
-    //     table.classList.add('table')
-        
-    //     for (let item of this._cart) {
-    //     let row = document.createElement('tr');
-    //     let itemNameCell = document.createElement('td')
-    //     itemNameCell.textContent = item.name
-    //     const itemPriceCell = document.createElement('td')
-    //     itemPriceCell.textContent = `${item.price}`
-
-    //     row.appendChild(itemNameCell)
-    //     row.appendChild(itemPriceCell)
-
-    //     table.appendChild(row)
-    // }
-    // //cartContainer1?.appendChild(table)
-    // return table
-    // }
-    
-    
-    // public cartHTMLElement(): HTMLDivElement {
-    //     const cartElement = document.createElement('table')
-    //     for (let item of new Set(this.cart)) {
-    //         const delButton = document.createElement('button')
-    //         delButton.id = `${item.id}-rm1`
-    //         delButton.classList.add('btn')
-    //         delButton.onclick = () => {
-    //             Shop.myUser.removeQuantityFromCart(item,1)
-    //         }
-    //         const delAllButton = document.createElement('button')
-    //         delAllButton.id = `${item.id}-rma`
-    //         delAllButton.innerText='all'
-    //         delAllButton.onclick = () => {
-    //             Shop.myUser.removeFromCart(item)
-    //         }
-
-
-    //     }
-
-        // const cartContainer = document.createElement('div')
-        // cartContainer.classList.add('cart-container')
-       
-
-    //     const cartContainer = document.getElementById('cart-container') as HTMLDivElement;
-    //     for (let item of this._cart) {
-    //         const itemDiv = document.createElement('div')
-    //         itemDiv.classList.add('cart-item')
-    //         const itemName = document.createElement('span')
-    //         itemName.classList.add('itemName')
-    //         const itemQuantity = document.createElement('span')
-    //         itemQuantity.classList.add('quantity')
-    //         const itemPrice = document.createElement('span')
-    //         itemPrice.textContent = `$${item.price}`
-            
-        
-
-    //         const removeFromCartButton = document.createElement('button');
-    //         removeFromCartButton.textContent = 'remove item'
-    //         removeFromCartButton.classList.add('btn')
-    //         removeFromCartButton.classList.add('btn-primary')
-
-            
-    //         itemDiv.appendChild(itemName)
-    //         itemDiv.appendChild(itemQuantity)
-    //         itemDiv.appendChild(itemPrice)
-    //         itemDiv.appendChild(removeFromCartButton)
-  
-
-    //         cartContainer?.appendChild(itemDiv)
-    //     }
-    //    return cartContainer as HTMLDivElement
-
-    // }
+   
 
 
     public get id(): string {
@@ -254,13 +163,6 @@ class User {
     }
 
 
-    // public addToCart(item: Item): void {
-    //     const itemDetails = {
-    //         name: item.name,
-    //         price: item.price,
-    //     };
-    //     this.cart.push(itemDetails);
-    // }
     public addToCart(item:Item):void{
         this.cart.push(item)
         console.log('addToCart Function')
@@ -292,26 +194,66 @@ class User {
         }
         console.log(`Total: $${this.getCartTotal()}`)
     }
+    public cartElement() {
+        const cartEle = document.createElement("table")
+            
+            for(const item of new Set(this.cart)){
+                const rmButton = document.createElement("button")
+                rmButton.id=`${item.id}-rm1`
+                rmButton.classList.add("btn", "btn-danger")
+                rmButton.onclick = () => {
+                    Shop.myUser!.removeQuantityFromCart(item,1)
+                    };
+                rmButton.innerText="-1"
 
-    public addRemoveEventListeners() {
-        document.addEventListener( 'click',() => {
-            const addToCartButton = document.createElement('button');
-            addToCartButton.textContent = 'Remove From Cart'
-            addToCartButton.classList.add('btn')
-            addToCartButton.classList.add('btn-primary')
-        })    
-        
-        // -addRemoveEventListeners() - This function adds event listeners to your cart's Remove One/Remove All Buttons.  They will use the previously build removeQuantityFromCart and removeFromCart functions built in the prev. nights homework.
+                const rmAllButton = document.createElement("button")
+                rmAllButton.id =`${item.id}-rmall`
+                rmAllButton.innerText="X"
+                rmAllButton.classList.add("btn", "btn-dark-red", "btn-danger")
+
+                rmAllButton.onclick=()=>{
+                    Shop.myUser!.removeFromCart(item)
+                }
+                cartEle.innerHTML+=`<tr><td><strong>${item.name}</strong></td><td>$${item.price}</td>
+                <td>${this.cart.filter((i)=>i.id===item.id).length}</td>
+                <td>${rmAllButton.outerHTML}</td>
+                <td>${rmButton.outerHTML}</td>
+                </tr>`
+            }
+            cartEle.innerHTML+=`<tr id="totalbar"><td><strong>${"Total:"}</strong></td><td>$${this.getCartTotal().toFixed(2)}</td></tr>`
+            return cartEle
+        }
+
+            addRemoveListeners(){
+                for(const item of new Set(this.cart)){
+                    const removeOneButton = document.getElementById(`${item.id}-rm1`) as HTMLButtonElement || null;
+                    if (removeOneButton){
+                        removeOneButton.onclick = () => {
+                        Shop.myUser?.removeQuantityFromCart(item,1)
+                        };
+                    }
+                    const removeAllButton = document.getElementById(`${item.id}-rmall`) as HTMLButtonElement || null;
+                    if(removeAllButton){
+                        removeAllButton.onclick = () => {
+                        Shop.myUser?.removeFromCart(item)
+                        };
+                    }
+                }
+            } 
+
+
+   
     }
    
 
-}
+
 
 class Shop {
-        
+    static myUser: User | undefined
     constructor(
         private _items: Item[] = []
     ){
+     
         let itemA = new Item('F-14 Tomcat', 10, 'Iranian surpluss, functional, port turbine non-functioning');
         this.items.push(itemA);
 
@@ -330,6 +272,11 @@ class Shop {
         let itemF = new Item('Dog', 2000, 'I will sell you my dog, apparently');
         this.items.push(itemF);
 
+        this.showItems()
+        Shop.myUser!.cart = []
+
+        Shop.updateCart()
+
         // save reference in Shop class to User
     }
     public get items(): Item[] {
@@ -338,80 +285,55 @@ class Shop {
     public set items(value: Item[]) {
         this._items = value;
     }
+   
+    
     public showItems(){
 
         const shopDiv = document.getElementById('shop')
         if (shopDiv) {        
-            shopDiv.innerHTML = '';
-        
-            this._items.forEach((item) => { 
-                const itemCard = item.itemElement()
-                shopDiv.appendChild(itemCard)
-            }) 
+           for (let item of this.items){
+            document.getElementById('shop')!.appendChild(item.itemElement())
+           }
         } else {
             console.log('ShopDiv Element not found in HTML')
         }
     }
-    public updateCart(_items:Item): void {
-        const cartContainer = document.getElementById('cart-container')
-        console.log(_items, 'here from updateCart')
-        //cartContainer?.appendChild(_items)
-        
+    static updateCart(){
+        const cartContainer = document.getElementById('cart-container')!
 
-        if (cartContainer) {
-            
-            
-            //User.cart
-              
-            const row = document.createElement('tr');
-            const itemNameCell = document.createElement('td');
-            itemNameCell.textContent = _items.name;
-            const itemPriceCell = document.createElement('td');
-            itemPriceCell.textContent = `$${_items.price.toFixed(2)}`;
-            row.appendChild(itemNameCell);
-            row.appendChild(itemPriceCell);
-            console.log('inside cartContinaer!!!!!!!')
-    
-            cartContainer.appendChild(row);
+        if (Shop.myUser!.cart.length <= 0) {
+            cartContainer.innerHTML = `<h2>Nothing but air</h2>`
+            console.log(cartContainer)
+        } else { 
+            cartContainer.replaceChildren(Shop.myUser!.cartElement())
+            cartContainer!.innerHTML = ("<h2>My Cart:</h2>" + cartContainer?.innerHTML)
+
+            Shop.myUser?.addRemoveListeners()
+
         }
-        console.log('Nothing but air in updateCart')
-        console.log(cartContainer)
+    }
+
+    static loginUser(event:Event): void {
+        event.preventDefault()
+        console.log('trying to login')
+        Shop.myUser = User.addLoginUserListener()
+        new Shop()
+        
     }
 
 }
 
+document.getElementById('loginbutton')!.addEventListener('click', (event:Event) => Shop.loginUser(event))
+
+// let myUser: User | null = null;   
+
+// User.addLoginUserListener();
+
+// let myShop = new Shop();
+
+// myShop.showItems();
+
+// console.log(myShop)
+// console.log(User)
 
 
-let myUser: User | null = null;   
-// let myUser: User;
-//let user1 = new User('fred', 30)
-User.addLoginUserListener();
-// console.log('myUser', myUser)
-
-// if (myUser){
-//     let myShop = new Shop()
-// }
-let myShop = new Shop();
-// let myUser = new User('frank', 33);
-
-
-// let myUser = User.loginUser()
-myShop.showItems();
-// myUser?.attToCart(newItem)
-// myShop.updateCart()
-console.log(myShop)
-console.log(User)
-
-// user1.addToCart(myShop.items[1]);
-// user1.addToCart(myShop.items[1]);
-// user1.addToCart(myShop.items[1]);
-
-// user1.printCart();
-
-
-//myUser.addToCart(myShop.items[0]);
-
-
-
-
-// User.loginUser()
